@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Java Backend Scaffold</title>
+  <meta name="description" content="Spring Boot 3 + Java 17 后端起步工程：统一分层、统一响应、OpenAPI、示例 CRUD。" />
+  <style>
+    :root {
+      --paper: #f4f5f3;
+      --ink: #101418;
+      --moss: #2a6b4f;
+      --slate: #667085;
+      --line: #d8dcd4;
+      --panel: #0e1310;
+      --panel-ink: #d7e0d8;
+      --panel-dim: #7a8a7e;
+      --ok: #6db33f;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font: 400 16px/1.65 "Segoe UI", system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--moss); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    a:focus-visible {
+      outline: 2px solid var(--moss);
+      outline-offset: 3px;
+    }
+
+    .wrap {
+      width: min(880px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 28px 0 72px;
+    }
+
+    /* meta strip */
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 18px;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+      font: 500 12px/1 "Cascadia Code", Consolas, "SF Mono", monospace;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--slate);
+    }
+    .meta strong { color: var(--ink); font-weight: 600; }
+    .meta nav { display: flex; gap: 16px; }
+    .meta nav a { color: var(--slate); }
+    .meta nav a:hover { color: var(--moss); text-decoration: none; }
+
+    /* hero */
+    .hero { padding: 56px 0 40px; }
+    .eyebrow {
+      margin: 0 0 14px;
+      font: 500 12px/1 "Cascadia Code", Consolas, monospace;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--moss);
+    }
+    h1 {
+      margin: 0 0 16px;
+      font-size: clamp(32px, 5vw, 44px);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      font-weight: 700;
+    }
+    .lede {
+      margin: 0 0 28px;
+      max-width: 36em;
+      color: var(--slate);
+      font-size: 17px;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+    .tag {
+      padding: 5px 10px;
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      font: 500 12px/1.2 "Cascadia Code", Consolas, monospace;
+      color: var(--ink);
+      background: #fff;
+    }
+
+    /* signature panel */
+    .panel {
+      background: var(--panel);
+      color: var(--panel-ink);
+      border: 1px solid #1c241e;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .panel-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      border-bottom: 1px solid #1c241e;
+      font: 500 11px/1 "Cascadia Code", Consolas, monospace;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--panel-dim);
+    }
+    .panel pre {
+      margin: 0;
+      padding: 18px 16px 20px;
+      overflow-x: auto;
+      font: 400 13.5px/1.7 "Cascadia Code", Consolas, "SF Mono", monospace;
+    }
+    .panel .c { color: var(--panel-dim); }
+    .panel .k { color: #9ecfae; }
+    .panel .s { color: #c5d4a8; }
+    .panel .n { color: var(--ok); }
+
+    /* sections */
+    section { padding: 40px 0 8px; }
+    .sec-head {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      margin: 0 0 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+    .sec-head .idx {
+      font: 600 12px/1 "Cascadia Code", Consolas, monospace;
+      color: var(--moss);
+      letter-spacing: 0.06em;
+    }
+    .sec-head h2 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 650;
+      letter-spacing: -0.01em;
+    }
+
+    .spec {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .spec li {
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .spec .code {
+      font: 600 12px/1.4 "Cascadia Code", Consolas, monospace;
+      color: var(--moss);
+      padding-top: 3px;
+    }
+    .spec h3 {
+      margin: 0 0 4px;
+      font-size: 16px;
+      font-weight: 650;
+    }
+    .spec p {
+      margin: 0;
+      color: var(--slate);
+      font-size: 15px;
+    }
+
+    .cmds {
+      display: grid;
+      gap: 12px;
+    }
+    .cmd {
+      display: grid;
+      grid-template-columns: 88px 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+      font: 400 14px/1.6 "Cascadia Code", Consolas, monospace;
+    }
+    .cmd span:first-child {
+      color: var(--slate);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding-top: 2px;
+    }
+    .cmd code { color: var(--ink); word-break: break-all; }
+
+    .tree {
+      margin: 0;
+      padding: 18px 16px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: #fff;
+      overflow-x: auto;
+      font: 400 13.5px/1.7 "Cascadia Code", Consolas, monospace;
+      color: var(--ink);
+    }
+
+    .endpoints {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14.5px;
+    }
+    .endpoints th,
+    .endpoints td {
+      text-align: left;
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+    .endpoints th {
+      font: 600 12px/1 "Cascadia Code", Consolas, monospace;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--slate);
+    }
+    .endpoints td:first-child,
+    .endpoints td:nth-child(2) {
+      font-family: "Cascadia Code", Consolas, monospace;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .endpoints td:first-child { color: var(--moss); font-weight: 600; }
+
+    footer {
+      margin-top: 56px;
+      padding-top: 20px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 24px;
+      justify-content: space-between;
+      color: var(--slate);
+      font-size: 14px;
+    }
+    footer a { color: var(--ink); font-weight: 600; }
+
+    @media (max-width: 560px) {
+      .spec li,
+      .cmd { grid-template-columns: 1fr; gap: 6px; }
+      .hero { padding-top: 40px; }
+      .endpoints td:first-child,
+      .endpoints td:nth-child(2) { white-space: normal; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="meta">
+      <div><strong>java-backend-scaffold</strong> · 0.1.0</div>
+      <nav>
+        <a href="https://github.com/kafeiq19/java-backend-scaffold">源码</a>
+        <a href="https://github.com/kafeiq19/java-backend-scaffold#readme">README</a>
+        <a href="https://github.com/kafeiq19/java-backend-scaffold/blob/main/docs/compose/spec/java-backend-scaffold.md">规格</a>
+      </nav>
+    </header>
+
+    <div class="hero">
+      <p class="eyebrow">Spring Boot 3 · Java 17 · Maven</p>
+      <h1>可直接开业务的<br />Java 后端起步工程</h1>
+      <p class="lede">
+        统一分层与统一响应/异常，内置 OpenAPI、Actuator 与 User 示例 CRUD。
+        本地一键启动（H2），克隆后按层扩展即可。
+      </p>
+      <div class="tags">
+        <span class="tag">Spring MVC</span>
+        <span class="tag">Data JPA</span>
+        <span class="tag">springdoc</span>
+        <span class="tag">H2</span>
+        <span class="tag">JUnit 5</span>
+        <span class="tag">CI</span>
+      </div>
+
+      <div class="panel" aria-label="统一响应示例">
+        <div class="panel-bar">
+          <span>POST /api/users → 200</span>
+          <span>ApiResponse</span>
+        </div>
+        <pre><span class="c"># 启动</span>
+./mvnw spring-boot:run
+
+<span class="c"># 统一响应</span>
+{
+  <span class="k">"code"</span>: <span class="n">0</span>,
+  <span class="k">"message"</span>: <span class="s">"success"</span>,
+  <span class="k">"data"</span>: {
+    <span class="k">"id"</span>: <span class="n">1</span>,
+    <span class="k">"name"</span>: <span class="s">"Ada"</span>,
+    <span class="k">"email"</span>: <span class="s">"ada@example.com"</span>
+  },
+  <span class="k">"timestamp"</span>: <span class="s">"2026-02-19T12:00:00Z"</span>
+}</pre>
+      </div>
+    </div>
+
+    <section>
+      <div class="sec-head">
+        <span class="idx">01</span>
+        <h2>能力清单</h2>
+      </div>
+      <ul class="spec">
+        <li>
+          <div class="code">API</div>
+          <div>
+            <h3>统一响应与分页</h3>
+            <p><code>ApiResponse</code> / <code>PageResponse</code> / <code>ResultCode</code>，错误码与 HTTP 状态对齐（400 / 404 / 405 / 409 / 500）。</p>
+          </div>
+        </li>
+        <li>
+          <div class="code">EX</div>
+          <div>
+            <h3>全局异常处理</h3>
+            <p>校验失败、非法 JSON、资源不存在、唯一约束冲突均有确定映射，并发邮箱冲突兜底为 409。</p>
+          </div>
+        </li>
+        <li>
+          <div class="code">LAYER</div>
+          <div>
+            <h3>按层分包结构</h3>
+            <p><code>common</code>（api / config / exception）与 <code>module/&lt;feature&gt;</code>，示例业务 User 完整走通 Controller → Service → Repository。</p>
+          </div>
+        </li>
+        <li>
+          <div class="code">DOC</div>
+          <div>
+            <h3>OpenAPI 与健康检查</h3>
+            <p>Swagger UI、OpenAPI JSON、Actuator health 开箱可用，便于联调与探活。</p>
+          </div>
+        </li>
+        <li>
+          <div class="code">TEST</div>
+          <div>
+            <h3>测试与 CI</h3>
+            <p>MockMvc 覆盖 CRUD 与主要错误路径；GitHub Actions 在 push / PR 时执行 <code>./mvnw -B verify</code>。</p>
+          </div>
+        </li>
+        <li>
+          <div class="code">CFG</div>
+          <div>
+            <h3>配置边界清晰</h3>
+            <p>仓库仅含默认可运行配置；本地密钥与连接信息走 <code>.env</code> 与 <code>application-local.yml</code>，已忽略提交。</p>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <div class="sec-head">
+        <span class="idx">02</span>
+        <h2>快速开始</h2>
+      </div>
+      <div class="cmds">
+        <div class="cmd">
+          <span>build</span>
+          <code>./mvnw clean package</code>
+        </div>
+        <div class="cmd">
+          <span>run</span>
+          <code>./mvnw spring-boot:run</code>
+        </div>
+        <div class="cmd">
+          <span>test</span>
+          <code>./mvnw test</code>
+        </div>
+        <div class="cmd">
+          <span>swagger</span>
+          <code>http://localhost:8080/swagger-ui.html</code>
+        </div>
+        <div class="cmd">
+          <span>health</span>
+          <code>http://localhost:8080/actuator/health</code>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-head">
+        <span class="idx">03</span>
+        <h2>示例接口</h2>
+      </div>
+      <table class="endpoints">
+        <thead>
+          <tr>
+            <th>方法</th>
+            <th>路径</th>
+            <th>说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>POST</td>
+            <td>/api/users</td>
+            <td>创建用户</td>
+          </tr>
+          <tr>
+            <td>GET</td>
+            <td>/api/users/{id}</td>
+            <td>按 ID 查询</td>
+          </tr>
+          <tr>
+            <td>GET</td>
+            <td>/api/users?page=0&amp;size=10</td>
+            <td>分页列表</td>
+          </tr>
+          <tr>
+            <td>PUT</td>
+            <td>/api/users/{id}</td>
+            <td>更新用户</td>
+          </tr>
+          <tr>
+            <td>DELETE</td>
+            <td>/api/users/{id}</td>
+            <td>删除用户</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <div class="sec-head">
+        <span class="idx">04</span>
+        <h2>工程结构</h2>
+      </div>
+      <pre class="tree">src/main/java/com/example/scaffold
+├── ScaffoldApplication.java
+├── common
+│   ├── api/          ApiResponse / ResultCode / PageResponse
+│   ├── config/       OpenAPI / CORS
+│   └── exception/    BizException / GlobalExceptionHandler
+└── module/user/      Controller / Service / Repository / DTO</pre>
+    </section>
+
+    <footer>
+      <div>MIT License · 基于 Spring Boot 3.5 构建</div>
+      <div>
+        <a href="https://github.com/kafeiq19/java-backend-scaffold">github.com/kafeiq19/java-backend-scaffold</a>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>
