@@ -47,14 +47,15 @@ com.example.scaffold
 - Actuator：`/actuator/health`
 
 ### 错误行为
-- 校验失败 → 400 + 字段级 message
-- 资源不存在 → 404
-- 邮箱重复创建 → 409
+- 校验失败 / 非法 JSON body → 400 + message
+- 资源不存在 / 未知路由 → 404
+- 邮箱重复（创建/更新，含并发唯一约束兜底）→ 409
+- 方法不允许 → 405
 - 未捕获异常 → 500（生产可不暴露 detail）
 
 ### 测试边界
-- Web 层：MockMvc 覆盖 User CRUD 成功与主要错误路径
-- 配置：`application.yml` 可在 H2 下启动；文档说明 MySQL profile
+- Web 层：MockMvc 覆盖 User CRUD 成功与主要错误路径（含更新邮箱冲突）
+- 配置：`application.yml` 可在 H2 下启动
 
 ## [S3] Out of Scope
 - Spring Security / JWT / RBAC
@@ -66,5 +67,5 @@ com.example.scaffold
 - [ ] T1: 初始化 Maven 工程、Wrapper 与基础配置 — acceptance: `./mvnw -q -DskipTests package` 可离线 Wrapper 引导并编译（covers: S2）
 - [ ] T2: 实现 common 层（ApiResponse/ResultCode/PageResponse/异常/全局处理器/OpenAPI/CORS） — acceptance: 模块可编译，异常路径返回统一 JSON（covers: S2; depends: T1）
 - [ ] T3: 实现 User 示例 CRUD（entity/repo/service/controller/dto） — acceptance: `/api/users` 五类操作可用，邮箱唯一冲突返回 409（covers: S2; depends: T2）
-- [ ] T4: 配置 application*.yml 与 README — acceptance: 默认 H2 可启动；README 说明构建、运行、Swagger、MySQL 切换（covers: S2; depends: T1）
+- [ ] T4: 配置 application.yml / application-dev.yml 与 README — acceptance: 默认 H2 可启动；README 说明构建、运行、Swagger（covers: S2; depends: T1）
 - [ ] T5: 编写并跑通单元/集成测试 — acceptance: `./mvnw test` 全绿，覆盖 CRUD 与校验/404/409（covers: S2; depends: T3）

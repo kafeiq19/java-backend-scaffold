@@ -7,6 +7,7 @@ import com.example.scaffold.common.exception.ResourceNotFoundException;
 import com.example.scaffold.module.user.dto.UserCreateRequest;
 import com.example.scaffold.module.user.dto.UserResponse;
 import com.example.scaffold.module.user.dto.UserUpdateRequest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -26,7 +27,7 @@ public class UserService {
 
     @Transactional
     public UserResponse create(UserCreateRequest request) {
-        String email = request.email().trim().toLowerCase();
+        String email = normalizeEmail(request.email());
         if (userRepository.existsByEmail(email)) {
             throw new BizException(ResultCode.CONFLICT, "email already exists: " + email);
         }
@@ -34,7 +35,11 @@ public class UserService {
         User user = new User(request.name().trim(), email);
         user.setCreatedAt(now);
         user.setUpdatedAt(now);
-        return UserResponse.from(userRepository.save(user));
+        try {
+            return UserResponse.from(userRepository.saveAndFlush(user));
+        } catch (DataIntegrityViolationException ex) {
+            throw new BizException(ResultCode.CONFLICT, "email already exists: " + email);
+        }
     }
 
     @Transactional(readOnly = true)
@@ -61,14 +66,18 @@ public class UserService {
             user.setName(request.name().trim());
         }
         if (request.email() != null && !request.email().isBlank()) {
-            String email = request.email().trim().toLowerCase();
+            String email = normalizeEmail(request.email());
             if (userRepository.existsByEmailAndIdNot(email, id)) {
                 throw new BizException(ResultCode.CONFLICT, "email already exists: " + email);
             }
             user.setEmail(email);
         }
         user.setUpdatedAt(Instant.now());
-        return UserResponse.from(userRepository.save(user));
+        try {
+            return UserResponse.from(userRepository.saveAndFlush(user));
+        } catch (DataIntegrityViolationException ex) {
+            throw new BizException(ResultCode.CONFLICT, "email already exists: " + user.getEmail());
+        }
     }
 
     @Transactional
@@ -80,5 +89,9 @@ public class UserService {
     private User findOrThrow(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("user", id));
+    }
+
+    private String normalizeEmail(String email) {
+        return email.trim().toLowerCase();
     }
 }

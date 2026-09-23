@@ -134,6 +134,35 @@ class UserControllerTest {
     }
 
     @Test
+    void updateEmailConflictReturns409() throws Exception {
+        mockMvc.perform(post("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new UserCreateRequest("Ada", "ada@example.com"))))
+                .andExpect(status().isOk());
+        MvcResult second = mockMvc.perform(post("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new UserCreateRequest("Bob", "bob@example.com"))))
+                .andReturn();
+        long bobId = objectMapper.readTree(second.getResponse().getContentAsString())
+                .path("data").path("id").asLong();
+
+        mockMvc.perform(put("/api/users/" + bobId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new UserUpdateRequest(null, "ada@example.com"))))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.code").value(409));
+    }
+
+    @Test
+    void malformedJsonReturns400() throws Exception {
+        mockMvc.perform(post("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{not-json"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(400));
+    }
+
+    @Test
     void getMissingUserReturns404() throws Exception {
         mockMvc.perform(get("/api/users/999999"))
                 .andExpect(status().isNotFound())
