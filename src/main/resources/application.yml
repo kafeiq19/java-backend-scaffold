@@ -1,15 +1,20 @@
+# 主配置。环境差异见 application-{profile}.yml，本地覆盖用 application-local.yml
+
 spring:
   application:
     name: java-backend-scaffold
   profiles:
     default: dev
+
   jpa:
     open-in-view: false
     hibernate:
+      # 生产建议 validate，表结构交给迁移脚本
       ddl-auto: update
     properties:
       hibernate:
         format_sql: false
+
   jackson:
     serialization:
       write-dates-as-timestamps: false

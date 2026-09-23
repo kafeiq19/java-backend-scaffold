@@ -1,5 +1,8 @@
+# dev：H2 内存库，无外部依赖
+
 spring:
   datasource:
+    # MODE=MYSQL 兼容 MySQL 语法；DB_CLOSE_DELAY=-1 避免连接断开后库被销毁
     url: jdbc:h2:mem:scaffold;MODE=MYSQL;DB_CLOSE_DELAY=-1
     driver-class-name: org.h2.Driver
     username: sa
