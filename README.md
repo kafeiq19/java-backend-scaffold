@@ -35,6 +35,26 @@ mvnw.cmd spring-boot:run
 - OpenAPI JSON: <http://localhost:8080/v3/api-docs>
 - H2 控制台（仅 dev）: <http://localhost:8080/h2-console>
 
+## 本地配置（不要提交真实配置）
+
+仓库只带可运行的默认配置。真实连接、密钥等写在本地，已用 `.gitignore` 排除。
+
+1. 环境变量：复制 `.env.example` 为 `.env` 后填写  
+2. 覆盖配置：复制 `config/application-local.yml.example` 为 `src/main/resources/application-local.yml`（或本机任意 `application-*.yml`）后修改
+
+示例（写入本地 `application-local.yml`，勿提交）：
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:h2:mem:scaffold;MODE=MYSQL;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+```
+
+外部库时把 `url`/`username`/`password` 换成你的值，密码建议用环境变量占位（如 `${DB_PASSWORD}`）。
+
 ## 示例 API（User CRUD）
 
 | 方法 | 路径 | 说明 |

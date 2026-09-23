@@ -30,3 +30,10 @@ logs/
 .env
 .env.*
 !.env.example
+
+# Local runtime config (use examples as templates)
+config/application-local.yml
+src/main/resources/application-local.yml
+src/main/resources/application-*.yml
+!src/main/resources/application.yml
+!src/main/resources/application-dev.yml
