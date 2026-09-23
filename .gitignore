@@ -1,0 +1,36 @@
+# Build
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Local toolchain (not part of the scaffold)
+.tools/
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.project
+.classpath
+.factorypath
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs & runtime
+*.log
+logs/
+*.pid
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# Maven wrapper properties may pin distribution; jar is committed
+.mvn/wrapper/maven-wrapper.jar.backup
