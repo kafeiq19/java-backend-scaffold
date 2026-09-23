@@ -8,6 +8,7 @@ public enum ResultCode {
     BAD_REQUEST(400, "bad request", HttpStatus.BAD_REQUEST),
     VALIDATION_ERROR(400, "validation error", HttpStatus.BAD_REQUEST),
     NOT_FOUND(404, "resource not found", HttpStatus.NOT_FOUND),
+    METHOD_NOT_ALLOWED(405, "method not allowed", HttpStatus.METHOD_NOT_ALLOWED),
     CONFLICT(409, "resource conflict", HttpStatus.CONFLICT),
     INTERNAL_ERROR(500, "internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
 

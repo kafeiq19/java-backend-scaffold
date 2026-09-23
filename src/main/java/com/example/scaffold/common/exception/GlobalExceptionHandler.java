@@ -59,7 +59,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ApiResponse<Void>> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
-                .body(ApiResponse.error(ResultCode.BAD_REQUEST, "method not allowed"));
+                .body(ApiResponse.error(ResultCode.METHOD_NOT_ALLOWED));
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
